@@ -10,6 +10,7 @@
 #include "graphics/renderer_3d.h"
 #include <input/keyboard.h>
 #include <input/input_manager.h>
+#include <system/debug_log.h>
 
 namespace gef
 {
@@ -24,10 +25,13 @@ public:
 	void update();
 	void move();//Player Controls
 	void render(gef::Renderer3D* r, PrimitiveBuilder* p);
+	void CollisionResponse();
 
 	b2Body* m_body;
 	gef::Matrix44 transform;
-	gef::InputManager* input_manager ;
+	gef::InputManager* input_manager;
+
+	int score;
 
 };
 

@@ -3,6 +3,7 @@
 Player::Player()
 {
 	set_type(PLAYER);
+	score = 0;
 }
 
 void Player::initPlayer(PrimitiveBuilder* pb, gef::InputManager* i, b2World* world)
@@ -83,4 +84,13 @@ void Player::render(gef::Renderer3D* r,PrimitiveBuilder* pb)
 {
 	r->DrawMesh(*this);
 	r->set_override_material(NULL);
+}
+
+void Player::CollisionResponse()
+{
+	if (m_body)
+	{
+		score++;
+	}
+	gef::DebugOut("Players score: %i\n", score);
 }

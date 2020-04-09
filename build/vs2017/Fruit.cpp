@@ -44,11 +44,7 @@ void Fruit::initFruit(PrimitiveBuilder* p, b2World* world)
 
 void Fruit::update()
 {
-	if (m_body == NULL)
-	{
-		gef::DebugOut("Fruit body null\n");
-	}
-	else
+	if (m_body != NULL)
 	{
 		gef::Vector4 pos(m_body->GetPosition().x, m_body->GetPosition().y, 0.f);
 		transform.SetIdentity();
@@ -57,6 +53,7 @@ void Fruit::update()
 		set_transform(transform);
 	}
 	
+	//gef::DebugOut("Fruit body null\n");
 
 	this->UpdateFromSimulation(m_body);
 }
@@ -68,7 +65,7 @@ void Fruit::render(gef::Renderer3D* r)
 		r->DrawMesh(*this);
 	}
 	
-	gef::DebugOut("no render\n");
+	//gef::DebugOut("no render\n");
 }
 
 void Fruit::CollisionResponse(b2World* world)
