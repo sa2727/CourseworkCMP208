@@ -11,7 +11,6 @@
 #include "Fruit.h"
 #include "Player.h"
 #include "Ground.h"
-#include <set>
 #include <vector>
 
 // FRAMEWORK FORWARD DECLARATIONS
@@ -62,6 +61,9 @@ private:
 
 	//fruit variables
 	Fruit f;
+	std::vector<Fruit*> fruits;
+	std::vector<Fruit*> FruitScheduledForRemoval;
+	std::vector<Fruit*> FruittoPLayerScheduledForRemoval;
 
 	//Player variables
 	Player p;
@@ -70,6 +72,7 @@ private:
 	Ground g;
 
 	bool flagFruit;
+	bool FlagPlayer;
 };
 
 #endif // _SCENE_APP_H

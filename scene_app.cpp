@@ -49,13 +49,22 @@ void SceneApp::Init()
 		gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
 	}
 
+	for (int i = 0; i < 5; i++)
+	{
+		float posx = 1 + 20 * (rand() / (float)RAND_MAX);
+		float posy = 10 + 20 * (rand() / (float)RAND_MAX);
+		//posy = 15.f;
+		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
+		fruits.push_back(fruit);
+	}
+
 	g.initGround(primitive_builder_, world);
-	f.initFruit(primitive_builder_,world); 
 	p.initPlayer(primitive_builder_, input_manager_, world);
 	InitFont();
 	SetupLights();
 
 	flagFruit = false;
+	FlagPlayer = false;
 }
 
 void SceneApp::CleanUp()
@@ -88,19 +97,65 @@ bool SceneApp::Update(float frame_time)
 	world->Step(frame_time, vel_iteration, pos_interation);
 
 	g.update();
-	f.update();
 	p.update();
 
+	for (int i = 0; i < fruits.size(); i++)
+	{
+		fruits[i]->update();
+	}
 
 	GroundPlayerCollision();
 	
 	if (flagFruit)
 	{
 		gef::DebugOut("calling delete now!\n");
-		f.CollisionResponse(world);
+		//process list for deletion
+		std::vector<Fruit*>::iterator it = FruitScheduledForRemoval.begin();
+		std::vector<Fruit*>::iterator end = FruitScheduledForRemoval.end();
+		for (; it != end; ++it) {
+			Fruit* dyingFruit = *it;
+
+			//delete ball, physics body is destroyed here
+			delete dyingFruit;
+
+			///remove it from main list of fruits
+			std::vector<Fruit*>::iterator it = std::find(fruits.begin(), fruits.end(), dyingFruit);
+			if (it != fruits.end())
+				fruits.erase(it);
+		}
+
+		//clear this list for next time
+		FruitScheduledForRemoval.clear();
+
 		flagFruit = false;
-		
 	}
+
+	
+	if (FlagPlayer)
+	{
+		//process list for deletion
+		std::vector<Fruit*>::iterator it = FruittoPLayerScheduledForRemoval.begin();
+		std::vector<Fruit*>::iterator end = FruittoPLayerScheduledForRemoval.end();
+		for (; it != end; ++it) {
+			Fruit* dyingFruit = *it;
+
+			//delete ball, physics body is destroyed here
+			delete dyingFruit;
+
+			//remove it from main list of fruits
+			std::vector<Fruit*>::iterator it = std::find(fruits.begin(), fruits.end(), dyingFruit);
+			if (it != fruits.end())
+				fruits.erase(it);
+		}
+
+		//clear this list for next time
+		FruittoPLayerScheduledForRemoval.clear();
+
+		//update player score
+		p.CollisionResponse();
+
+		FlagPlayer = false;
+	}	
 
 	return true;
 }
@@ -118,9 +173,7 @@ void SceneApp::Render()
 
 	// view
 	gef::Vector4 camera_eye(0.0f, 7.0f, 50.0f);
-	//gef::Vector4 camera_eye(player_body->GetPosition().x, player_body->GetPosition().y + 5, 50.0f);
 	gef::Vector4 camera_lookat(0.0f, 0.0f, 0.0f);
-	//gef::Vector4 camera_lookat(player_body->GetWorldCenter().x, player_body->GetWorldCenter().y, 0.0f);
 	gef::Vector4 camera_up(0.0f, 1.0f, 0.0f);
 	gef::Matrix44 view_matrix;
 	view_matrix.LookAt(camera_eye, camera_lookat, camera_up);
@@ -129,16 +182,21 @@ void SceneApp::Render()
 	// draw 3d geometry
 	renderer_3d_->Begin();
 
-	//draw fruit 
-	renderer_3d_->set_override_material(&primitive_builder_->green_material());
-	f.render(renderer_3d_);
-	renderer_3d_->set_override_material(NULL);
-
 	//draw player
 	p.render(renderer_3d_, primitive_builder_);
 	
 	//draw ground 
 	g.render(renderer_3d_);
+
+	//draw fruit 
+	renderer_3d_->set_override_material(&primitive_builder_->green_material());
+	for (int i = 0; i < fruits.size(); i++)
+	{
+		fruits[i]->render(renderer_3d_);		
+	}
+
+	renderer_3d_->set_override_material(NULL);
+
 
 	renderer_3d_->End();
 
@@ -173,20 +231,12 @@ void SceneApp::GroundPlayerCollision()
 			game_object* game_object1 = (game_object*)bodyA->GetUserData();
 			game_object* game_object2 = (game_object*)bodyB->GetUserData();
 
-			//Fruit* fruit = (Fruit*)bodyA->GetUserData();		
-
-			/*if (game_object1 || game_object2)
-			{
-				gef::DebugOut("gameobject collision\n");
-			}*/
 			if (!game_object1 || !game_object2)//check for null pointers
 			{
 				gef::DebugOut("Null\n");
 			}
 			else
 			{			
-				//gef::DebugOut("Player health: %i\n", game_object1->health);
-				//gef::DebugOut("Enemy score: %i\n", game_object2->score);
 				//gef::DebugOut("%i\n", game_object1->type());
 				//gef::DebugOut("%i\n", game_object2->type());
 			}
@@ -195,7 +245,12 @@ void SceneApp::GroundPlayerCollision()
 			{
 				if (game_object1->type() == FRUIT)
 				{
-					fruit = (Fruit*)bodyB->GetUserData();
+					fruit = (Fruit*)bodyA->GetUserData();
+				}
+				
+				if (game_object1->type() == PLAYER)
+				{
+					player = (Player*)bodyA->GetUserData();
 				}
 			}
 			if (game_object2)
@@ -204,12 +259,26 @@ void SceneApp::GroundPlayerCollision()
 				{
 					fruit = (Fruit*)bodyB->GetUserData();
 				}
-			}
 
-			if(fruit)
+				if (game_object2->type() == PLAYER)
+				{
+					player = (Player*)bodyB->GetUserData();
+				}
+			}
+			
+			//fruit hits the player
+			if(fruit && player)
 			{			
 				gef::DebugOut("IT! collided\n");
-				flagFruit = true;				
+				FruittoPLayerScheduledForRemoval.push_back(fruit);
+				FlagPlayer = true;
+			}
+
+			//fruit hits the ground
+			if (fruit)
+			{
+				FruitScheduledForRemoval.push_back(fruit);
+				flagFruit = true;
 			}
 			
 			//gef::DebugOut("%i\n", world->GetContactCount());
