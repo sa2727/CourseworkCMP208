@@ -2,34 +2,22 @@
 
 Fruit::Fruit()
 {
+}
+
+Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy)
+{
+	m_body = NULL;
 	set_type(FRUIT);
-}
+	score = 0;
 
-Fruit::~Fruit()
-{
-	//m_body->GetWorld()->DestroyBody(m_body);
-}
-
-void Fruit::initFruit(PrimitiveBuilder* p, b2World* world)
-{
 	set_mesh(p->GetDefaultCubeMesh());
 
 	//physics body
 	b2BodyDef bdef;
 	bdef.type = b2_dynamicBody;
-	bdef.position = b2Vec2(8.0f, 20.0f);
-
-	// set mass data
-	b2MassData mData;
-	mData.center = b2Vec2(0.0f, 0.0f);
-	mData.mass = 1.0f;
-	mData.I = 1.0f;
+	bdef.position = b2Vec2(posx, posy);
 
 	m_body = world->CreateBody(&bdef);
-
-	m_body->SetMassData(&mData);
-
-	m_body->SetUserData(this);
 
 	//shape
 	b2PolygonShape shape;
@@ -40,6 +28,13 @@ void Fruit::initFruit(PrimitiveBuilder* p, b2World* world)
 	fdef.shape = &shape;
 	fdef.density = 1;
 	m_body->CreateFixture(&fdef);
+
+	m_body->SetUserData(this);
+}
+
+Fruit::~Fruit()
+{
+	m_body->GetWorld()->DestroyBody(m_body);
 }
 
 void Fruit::update()
@@ -54,7 +49,6 @@ void Fruit::update()
 	}
 	
 	//gef::DebugOut("Fruit body null\n");
-
 	this->UpdateFromSimulation(m_body);
 }
 
