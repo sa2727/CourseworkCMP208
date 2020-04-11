@@ -106,53 +106,35 @@ bool SceneApp::Update(float frame_time)
 
 	GroundPlayerCollision();
 	
-	if (flagFruit)
+	//gef::DebugOut("calling delete now!\n");
+	//process list for deletion
+	std::vector<Fruit*>::iterator it = FruitScheduledForRemoval.begin();
+	std::vector<Fruit*>::iterator end = FruitScheduledForRemoval.end();
+	
+	if (!FruitScheduledForRemoval.empty())
 	{
-		gef::DebugOut("calling delete now!\n");
-		//process list for deletion
-		std::vector<Fruit*>::iterator it = FruitScheduledForRemoval.begin();
-		std::vector<Fruit*>::iterator end = FruitScheduledForRemoval.end();
-		for (; it != end; ++it) {
+		for (; it != end; ++it)
+		{
 			Fruit* dyingFruit = *it;
-
+			
 			//delete ball, physics body is destroyed here
 			delete dyingFruit;
-
+			
 			///remove it from main list of fruits
 			std::vector<Fruit*>::iterator it = std::find(fruits.begin(), fruits.end(), dyingFruit);
 			if (it != fruits.end())
+			{
 				fruits.erase(it);
+			}
 		}
-
 		//clear this list for next time
 		FruitScheduledForRemoval.clear();
-
-		flagFruit = false;
 	}
 
-	
-	if (FlagPlayer)
+	if(FlagPlayer)
 	{
-		//process list for deletion
-		std::vector<Fruit*>::iterator it = FruittoPLayerScheduledForRemoval.begin();
-		std::vector<Fruit*>::iterator end = FruittoPLayerScheduledForRemoval.end();
-		for (; it != end; ++it) {
-			Fruit* dyingFruit = *it;
-
-			//delete ball, physics body is destroyed here
-			delete dyingFruit;
-
-			//remove it from main list of fruits
-			std::vector<Fruit*>::iterator it = std::find(fruits.begin(), fruits.end(), dyingFruit);
-			if (it != fruits.end())
-				fruits.erase(it);
-		}
-
-		//clear this list for next time
-		FruittoPLayerScheduledForRemoval.clear();
-
 		//update player score
-		p.CollisionResponse();
+		p.IncrementScore();
 
 		FlagPlayer = false;
 	}	
@@ -269,16 +251,15 @@ void SceneApp::GroundPlayerCollision()
 			//fruit hits the player
 			if(fruit && player)
 			{			
-				gef::DebugOut("IT! collided\n");
-				FruittoPLayerScheduledForRemoval.push_back(fruit);
+				//gef::DebugOut("IT! collided\n");
+				FruitScheduledForRemoval.push_back(fruit);
 				FlagPlayer = true;
 			}
-
+			
 			//fruit hits the ground
 			if (fruit)
 			{
 				FruitScheduledForRemoval.push_back(fruit);
-				flagFruit = true;
 			}
 			
 			//gef::DebugOut("%i\n", world->GetContactCount());
