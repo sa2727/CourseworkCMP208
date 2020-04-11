@@ -25,7 +25,7 @@ public:
 	void update();
 	void move();//Player Controls
 	void render(gef::Renderer3D* r, PrimitiveBuilder* p);
-	void CollisionResponse();
+	void IncrementScore();
 
 	b2Body* m_body;
 	gef::Matrix44 transform;

@@ -25,11 +25,9 @@ public:
 	~Fruit();
 	void update();
 	void render(gef::Renderer3D* r);
-	void CollisionResponse(b2World* world);
 	
 	b2Body* m_body;
 	gef::Matrix44 transform;
 	int score;
-
 };
 
