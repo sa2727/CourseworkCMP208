@@ -27,6 +27,7 @@ void Ground::initGround(PrimitiveBuilder* p, b2World* world)
 	b2FixtureDef static_fixture_def;
 	static_fixture_def.density = 1.0f;
 	static_fixture_def.shape = &static_shape;
+	static_fixture_def.friction = 1.0f;
 
 	//bind fixture
 	m_body->CreateFixture(&static_fixture_def);

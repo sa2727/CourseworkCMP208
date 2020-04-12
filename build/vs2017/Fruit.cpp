@@ -39,11 +39,7 @@ Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy)
 	fdef.density = 1;
 	m_body->CreateFixture(&fdef);
 
-}
-
-Fruit::~Fruit()
-{
-	m_body->GetWorld()->DestroyBody(m_body);
+	m_body->SetLinearDamping(3.f);
 }
 
 void Fruit::update()
@@ -69,5 +65,11 @@ void Fruit::render(gef::Renderer3D* r)
 	}
 	
 	//gef::DebugOut("no render\n");
+}
+
+void Fruit::collisionCheck(b2World* world)
+{
+	world->DestroyBody(m_body);
+	m_body = NULL;
 }
 

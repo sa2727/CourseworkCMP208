@@ -37,8 +37,10 @@ void Player::initPlayer(PrimitiveBuilder* pb, gef::InputManager* i, b2World* wor
 	//fixture
 	b2FixtureDef fdef;
 	fdef.shape = &shape;
-	fdef.density = 1;
+	fdef.density = 1.f;
+
 	m_body->CreateFixture(&fdef);
+	
 }
 
 void Player::update()

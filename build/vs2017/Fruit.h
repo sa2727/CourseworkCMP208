@@ -22,9 +22,9 @@ class Fruit : public game_object
 public:
 	Fruit();
 	Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy);
-	~Fruit();
 	void update();
 	void render(gef::Renderer3D* r);
+	void collisionCheck(b2World* world);
 	
 	b2Body* m_body;
 	gef::Matrix44 transform;
