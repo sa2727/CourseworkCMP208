@@ -94,3 +94,8 @@ void Player::IncrementScore()
 	
 	gef::DebugOut("Players score: %i\n", score);
 }
+
+int Player::getScore()
+{
+	return score;
+}

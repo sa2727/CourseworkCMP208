@@ -26,6 +26,7 @@ public:
 	void move();//Player Controls
 	void render(gef::Renderer3D* r, PrimitiveBuilder* p);
 	void IncrementScore();
+	int getScore();
 
 	b2Body* m_body;
 	gef::Matrix44 transform;
