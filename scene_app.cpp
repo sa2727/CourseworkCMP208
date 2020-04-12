@@ -49,11 +49,12 @@ void SceneApp::Init()
 		gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
 	}
 	
+	//draw first five fruits
 	for (int i = 0; i < 5; i++)
 	{
-		float posx = 1 + 20 * (rand() / (float)RAND_MAX);
-		float posy = 10 + 20 * (rand() / (float)RAND_MAX);
-		//posy = 15.f;
+		float posx = -20 + 40 * (rand() / (float)RAND_MAX);
+		float posy = 15 + 5 * (rand() / (float)RAND_MAX);
+		//posy = 20.f;
 		//posx = 1.f;
 		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
 		fruits.push_back(fruit);
@@ -99,12 +100,12 @@ bool SceneApp::Update(float frame_time)
 	g.update();
 	p.update();
 
-	//always have 5 fruits on screen
-	if (fruits.size() <= 5)
+	//always have a minimum of 5 fruits on screen
+	if (fruits.size() < 5)
 	{
-		float posx = 1 + 20 * (rand() / (float)RAND_MAX);
-		float posy = 10 + 10 * (rand() / (float)RAND_MAX);
-		//posy = 15.f;
+		float posx = -20 + 40 * (rand() / (float)RAND_MAX);
+		float posy = 15 + 5 * (rand() / (float)RAND_MAX);
+		//posy = 20.f;
 		//posx = 1.f;
 		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
 		fruits.push_back(fruit);
@@ -163,8 +164,8 @@ void SceneApp::Render()
 	renderer_3d_->set_projection_matrix(projection_matrix);
 
 	// view
-	gef::Vector4 camera_eye(0.0f, 7.0f, 50.0f);
-	gef::Vector4 camera_lookat(0.0f, 0.0f, 0.0f);
+	gef::Vector4 camera_eye(0.0f, 10.0f, 40.0f);
+	gef::Vector4 camera_lookat(0.0f, 7.0f, 0.0f);
 	gef::Vector4 camera_up(0.0f, 1.0f, 0.0f);
 	gef::Matrix44 view_matrix;
 	view_matrix.LookAt(camera_eye, camera_lookat, camera_up);
@@ -350,6 +351,7 @@ void SceneApp::DrawHUD()
 	{
 		// display frame rate
 		font_->RenderText(sprite_renderer_, gef::Vector4(850.0f, 510.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "FPS: %.1f", fps_);
+		font_->RenderText(sprite_renderer_, gef::Vector4(10.0f, 10.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "Score: %i", p.getScore());
 	}
 }
 
