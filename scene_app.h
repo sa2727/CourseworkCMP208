@@ -63,7 +63,6 @@ private:
 	Fruit f;
 	std::vector<Fruit*> fruits;
 	std::vector<Fruit*> FruitScheduledForRemoval;
-	std::vector<Fruit*> FruittoPLayerScheduledForRemoval;
 
 	//Player variables
 	Player p;
@@ -71,7 +70,7 @@ private:
 	//ground variables
 	Ground g;
 
-	bool flagFruit;
+	//fruits hits player
 	bool FlagPlayer;
 };
 

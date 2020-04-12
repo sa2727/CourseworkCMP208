@@ -48,12 +48,13 @@ void SceneApp::Init()
 	{
 		gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
 	}
-
+	
 	for (int i = 0; i < 5; i++)
 	{
 		float posx = 1 + 20 * (rand() / (float)RAND_MAX);
 		float posy = 10 + 20 * (rand() / (float)RAND_MAX);
 		//posy = 15.f;
+		//posx = 1.f;
 		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
 		fruits.push_back(fruit);
 	}
@@ -63,7 +64,6 @@ void SceneApp::Init()
 	InitFont();
 	SetupLights();
 
-	flagFruit = false;
 	FlagPlayer = false;
 }
 
@@ -99,36 +99,45 @@ bool SceneApp::Update(float frame_time)
 	g.update();
 	p.update();
 
+	//always have 5 fruits on screen
+	if (fruits.size() <= 5)
+	{
+		float posx = 1 + 20 * (rand() / (float)RAND_MAX);
+		float posy = 10 + 10 * (rand() / (float)RAND_MAX);
+		//posy = 15.f;
+		//posx = 1.f;
+		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
+		fruits.push_back(fruit);
+	}	
+
 	for (int i = 0; i < fruits.size(); i++)
 	{
 		fruits[i]->update();
 	}
 
 	GroundPlayerCollision();
-	
+
 	//gef::DebugOut("calling delete now!\n");
 	//process list for deletion
 	std::vector<Fruit*>::iterator it = FruitScheduledForRemoval.begin();
 	std::vector<Fruit*>::iterator end = FruitScheduledForRemoval.end();
 	
+	//delete Fruits
 	if (!FruitScheduledForRemoval.empty())
 	{
-		for (; it != end; ++it)
+		for (int i = 0; i < FruitScheduledForRemoval.size(); i++)
 		{
 			Fruit* dyingFruit = *it;
-			
-			//delete ball, physics body is destroyed here
-			delete dyingFruit;
-			
+			it[i]->collisionCheck(world);
+
 			///remove it from main list of fruits
 			std::vector<Fruit*>::iterator it = std::find(fruits.begin(), fruits.end(), dyingFruit);
 			if (it != fruits.end())
 			{
 				fruits.erase(it);
 			}
+			FruitScheduledForRemoval.clear();
 		}
-		//clear this list for next time
-		FruitScheduledForRemoval.clear();
 	}
 
 	if(FlagPlayer)
@@ -174,9 +183,8 @@ void SceneApp::Render()
 	renderer_3d_->set_override_material(&primitive_builder_->green_material());
 	for (int i = 0; i < fruits.size(); i++)
 	{
-		fruits[i]->render(renderer_3d_);		
+		fruits[i]->render(renderer_3d_);
 	}
-
 	renderer_3d_->set_override_material(NULL);
 
 
