@@ -24,15 +24,15 @@ public:
 	void initPlayer(PrimitiveBuilder* p, gef::InputManager* i, b2World* world);
 	void update();
 	void move();//Player Controls
-	void render(gef::Renderer3D* r, PrimitiveBuilder* p);
-	void IncrementScore();
-	int getScore();
+	void render(gef::Renderer3D* r);
+	void IncrementScore();//increment score
+	int getScore();//return score
 
 	b2Body* m_body;
 	gef::Matrix44 transform;
 	gef::InputManager* input_manager;
 
-	int score;
+	int score;//player score
 
 };
 

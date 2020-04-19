@@ -2,13 +2,14 @@
 
 Fruit::Fruit()
 {
+	numofFruits = 10;
 }
 
 Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy)
 {
+	
 	m_body = NULL;
 	set_type(FRUIT);
-	score = 0;
 
 	set_mesh(p->GetDefaultCubeMesh());
 	
@@ -71,5 +72,17 @@ void Fruit::collisionCheck(b2World* world)
 {
 	world->DestroyBody(m_body);
 	m_body = NULL;
+}
+
+void Fruit::decrementNumFruits()
+{
+	numofFruits--;
+
+	//gef::DebugOut("Fruits: %i\n", numofFruits);
+}
+
+int Fruit::getnumFruits()
+{
+	return numofFruits;
 }
 

@@ -82,17 +82,16 @@ void Player::move()
 	}
 }
 
-void Player::render(gef::Renderer3D* r,PrimitiveBuilder* pb)
+void Player::render(gef::Renderer3D* r)
 {
 	r->DrawMesh(*this);
-	r->set_override_material(NULL);
 }
 
 void Player::IncrementScore()
 {	
 	score++;
 	
-	gef::DebugOut("Players score: %i\n", score);
+	//gef::DebugOut("Players score: %i\n", score);
 }
 
 int Player::getScore()

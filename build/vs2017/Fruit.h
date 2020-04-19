@@ -21,13 +21,17 @@ class Fruit : public game_object
 {
 public:
 	Fruit();
-	Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy);
-	void update();
-	void render(gef::Renderer3D* r);
-	void collisionCheck(b2World* world);
+	Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy);//creates fruit body
+	void update();//updates transform of fruit
+	void render(gef::Renderer3D* r);//renders fruit
+	void collisionCheck(b2World* world);//delete fruit body
+	void decrementNumFruits();//decrements fruit total
+	int getnumFruits();//returns number of fruits
+	
 	
 	b2Body* m_body;
 	gef::Matrix44 transform;
-	int score;
+
+	int numofFruits;//total number of fruits
 };
 
