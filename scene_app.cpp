@@ -66,6 +66,7 @@ void SceneApp::Init()
 	SetupLights();
 
 	FlagPlayer = false;
+	FlagFruit = false;
 }
 
 void SceneApp::CleanUp()
@@ -100,17 +101,19 @@ bool SceneApp::Update(float frame_time)
 	g.update();
 	p.update();
 
-	//always have a minimum of 5 fruits on screen
-	if (fruits.size() < 5)
+	if (f.getnumFruits() >= 5)
 	{
-		float posx = -20 + 40 * (rand() / (float)RAND_MAX);
-		float posy = 15 + 5 * (rand() / (float)RAND_MAX);
-		//posy = 20.f;
-		//posx = 1.f;
-		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
-		fruits.push_back(fruit);
-	}	
-
+		//always have a minimum of 5 fruits on screen
+		if (fruits.size() < 5)
+		{
+			float posx = -20 + 40 * (rand() / (float)RAND_MAX);
+			float posy = 15 + 5 * (rand() / (float)RAND_MAX);
+			//posy = 20.f;
+			//posx = 1.f;
+			Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
+			fruits.push_back(fruit);
+		}
+	}
 	for (int i = 0; i < fruits.size(); i++)
 	{
 		fruits[i]->update();
@@ -149,6 +152,13 @@ bool SceneApp::Update(float frame_time)
 		FlagPlayer = false;
 	}	
 
+	//decrment number of fruits left
+	if (FlagFruit)
+	{
+		f.decrementNumFruits();
+		FlagFruit = false;
+	}
+
 	return true;
 }
 
@@ -175,7 +185,7 @@ void SceneApp::Render()
 	renderer_3d_->Begin();
 
 	//draw player
-	p.render(renderer_3d_, primitive_builder_);
+	p.render(renderer_3d_);
 	
 	//draw ground 
 	g.render(renderer_3d_);
@@ -263,12 +273,14 @@ void SceneApp::GroundPlayerCollision()
 				//gef::DebugOut("IT! collided\n");
 				FruitScheduledForRemoval.push_back(fruit);
 				FlagPlayer = true;
+				FlagFruit = true;
 			}
 			
 			//fruit hits the ground
 			if (fruit)
 			{
 				FruitScheduledForRemoval.push_back(fruit);
+				FlagFruit = true;
 			}
 			
 			//gef::DebugOut("%i\n", world->GetContactCount());
@@ -351,7 +363,7 @@ void SceneApp::DrawHUD()
 	{
 		// display frame rate
 		font_->RenderText(sprite_renderer_, gef::Vector4(850.0f, 510.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "FPS: %.1f", fps_);
-		font_->RenderText(sprite_renderer_, gef::Vector4(10.0f, 10.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "Score: %i", p.getScore());
+		font_->RenderText(sprite_renderer_, gef::Vector4(10.0f, 10.0f, -0.9f), 1.0f, 0xffffffff, gef::TJ_LEFT, "Score: %i Fruits: %i", p.getScore(), f.getnumFruits());
 	}
 }
 

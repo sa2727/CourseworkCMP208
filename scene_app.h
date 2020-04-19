@@ -63,6 +63,7 @@ private:
 	Fruit f;
 	std::vector<Fruit*> fruits;
 	std::vector<Fruit*> FruitScheduledForRemoval;
+	bool FlagFruit;
 
 	//Player variables
 	Player p;
