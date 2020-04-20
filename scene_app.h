@@ -61,18 +61,18 @@ private:
 
 	//fruit variables
 	Fruit f;
-	std::vector<Fruit*> fruits;
-	std::vector<Fruit*> FruitScheduledForRemoval;
+	std::vector<Fruit*> bananas;
+	std::vector<Fruit*> apples;
+	std::vector<Fruit*> BananaScheduledForRemoval;
+	std::vector<Fruit*> AppleScheduledForRemoval;
 	bool FlagFruit;
 
 	//Player variables
 	Player p;
+	bool FlagPlayer;//fruits hits player
 
 	//ground variables
 	Ground g;
-
-	//fruits hits player
-	bool FlagPlayer;
 };
 
 #endif // _SCENE_APP_H

@@ -49,16 +49,29 @@ void SceneApp::Init()
 		gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
 	}
 	
-	//draw first five fruits
+	srand(time(NULL));
+	//draw first five banana
 	for (int i = 0; i < 5; i++)
 	{
 		float posx = -20 + 40 * (rand() / (float)RAND_MAX);
 		float posy = 15 + 5 * (rand() / (float)RAND_MAX);
 		//posy = 20.f;
 		//posx = 1.f;
-		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
-		fruits.push_back(fruit);
+		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy, 1);
+		bananas.push_back(fruit);
+		//bananas[i]->set_mesh(GetMeshFromSceneAssets(scene_assets_));
 	}
+	//draw first five apples
+	for (int i = 0; i < 5; i++)
+	{
+		float posx = -20 + 40 * (rand() / (float)RAND_MAX);
+		float posy = 15 + 5 * (rand() / (float)RAND_MAX);
+		//posy = 20.f;
+		//posx = 1.f;
+		Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy, 2);
+		apples.push_back(fruit);
+	}
+
 
 	g.initGround(primitive_builder_, world);
 	p.initPlayer(primitive_builder_, input_manager_, world);
@@ -101,54 +114,85 @@ bool SceneApp::Update(float frame_time)
 	g.update();
 	p.update();
 
-	if (f.getnumFruits() >= 5)
+	if (f.getnumFruits() >= 10)//while total number of fruits are greater than 10
 	{
-		//always have a minimum of 5 fruits on screen
-		if (fruits.size() < 5)
+		//pears
+		if (bananas.size() < 5)
 		{
 			float posx = -20 + 40 * (rand() / (float)RAND_MAX);
 			float posy = 15 + 5 * (rand() / (float)RAND_MAX);
 			//posy = 20.f;
 			//posx = 1.f;
-			Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy);
-			fruits.push_back(fruit);
+			Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy, 1);
+			bananas.push_back(fruit);
+		}
+
+		//apples
+		if (apples.size() < 5)
+		{
+			float posx = -20 + 40 * (rand() / (float)RAND_MAX);
+			float posy = 15 + 5 * (rand() / (float)RAND_MAX);
+			//posy = 20.f;
+			//posx = 1.f;
+			Fruit* fruit = new Fruit(primitive_builder_, world, posx, posy, 2);
+			apples.push_back(fruit);
 		}
 	}
-	for (int i = 0; i < fruits.size(); i++)
+	for (int i = 0; i < bananas.size(); i++)
 	{
-		fruits[i]->update();
+		bananas[i]->update();
+	}
+	for (int i = 0; i < apples.size(); i++)
+	{
+		apples[i]->update();
 	}
 
 	GroundPlayerCollision();
 
 	//gef::DebugOut("calling delete now!\n");
 	//process list for deletion
-	std::vector<Fruit*>::iterator it = FruitScheduledForRemoval.begin();
-	std::vector<Fruit*>::iterator end = FruitScheduledForRemoval.end();
-	
-	//delete Fruits
-	if (!FruitScheduledForRemoval.empty())
+	std::vector<Fruit*>::iterator it = BananaScheduledForRemoval.begin();	
+	//delete Bananas
+	if (!BananaScheduledForRemoval.empty())
 	{
-		for (int i = 0; i < FruitScheduledForRemoval.size(); i++)
+		for (int i = 0; i < BananaScheduledForRemoval.size(); i++)
 		{
 			Fruit* dyingFruit = *it;
-			it[i]->collisionCheck(world);
+			it[i]->collisionCheck(world);//remove from world
 
 			///remove it from main list of fruits
-			std::vector<Fruit*>::iterator it = std::find(fruits.begin(), fruits.end(), dyingFruit);
-			if (it != fruits.end())
+			std::vector<Fruit*>::iterator it = std::find(bananas.begin(), bananas.end(), dyingFruit);
+			if (it != bananas.end())
 			{
-				fruits.erase(it);
+				bananas.erase(it);
 			}
-			FruitScheduledForRemoval.clear();
+			BananaScheduledForRemoval.clear();
 		}
 	}
 
+	std::vector<Fruit*>::iterator it2 = AppleScheduledForRemoval.begin();
+	//delete Apples
+	if (!AppleScheduledForRemoval.empty())
+	{
+		for (int i = 0; i < AppleScheduledForRemoval.size(); i++)
+		{
+			Fruit* dyingFruit = *it2;
+			it2[i]->collisionCheck(world);//remove from world
+
+			///remove it from main list of fruits
+			std::vector<Fruit*>::iterator it = std::find(apples.begin(), apples.end(), dyingFruit);
+			if (it != apples.end())
+			{
+				apples.erase(it);
+			}
+			AppleScheduledForRemoval.clear();
+		}
+	}
+
+	//update player score
 	if(FlagPlayer)
 	{
-		//update player score
 		p.IncrementScore();
-
 		FlagPlayer = false;
 	}	
 
@@ -190,14 +234,21 @@ void SceneApp::Render()
 	//draw ground 
 	g.render(renderer_3d_);
 
-	//draw fruit 
-	renderer_3d_->set_override_material(&primitive_builder_->green_material());
-	for (int i = 0; i < fruits.size(); i++)
-	{
-		fruits[i]->render(renderer_3d_);
+	//draw Banana 
+	renderer_3d_->set_override_material(&primitive_builder_->blue_material());
+	for (int i = 0; i < bananas.size(); i++)
+	{		
+		bananas[i]->render(renderer_3d_);			
 	}
 	renderer_3d_->set_override_material(NULL);
-
+	
+	//render apple
+	renderer_3d_->set_override_material(&primitive_builder_->red_material());
+	for (int i = 0; i < apples.size(); i++)
+	{
+		apples[i]->render(renderer_3d_);
+	}
+	renderer_3d_->set_override_material(NULL);
 
 	renderer_3d_->End();
 
@@ -227,7 +278,8 @@ void SceneApp::GroundPlayerCollision()
 
 			// DO COLLISION RESPONSE HERE
 			Player* player = NULL;		
-			Fruit* fruit = NULL;
+			Fruit* banana = NULL;
+			Fruit* apple = NULL;
 
 			game_object* game_object1 = (game_object*)bodyA->GetUserData();
 			game_object* game_object2 = (game_object*)bodyB->GetUserData();
@@ -244,11 +296,16 @@ void SceneApp::GroundPlayerCollision()
 			
 			if (game_object1)
 			{
-				if (game_object1->type() == FRUIT)
+				if (game_object1->type() == BANANA)
 				{
-					fruit = (Fruit*)bodyA->GetUserData();
+					banana = (Fruit*)bodyA->GetUserData();
 				}
 				
+				if (game_object1->type() == APPLE)
+				{
+					apple = (Fruit*)bodyA->GetUserData();
+				}
+
 				if (game_object1->type() == PLAYER)
 				{
 					player = (Player*)bodyA->GetUserData();
@@ -256,9 +313,14 @@ void SceneApp::GroundPlayerCollision()
 			}
 			if (game_object2)
 			{
-				if (game_object2->type() == FRUIT)
+				if (game_object2->type() == BANANA)
 				{
-					fruit = (Fruit*)bodyB->GetUserData();
+					banana = (Fruit*)bodyB->GetUserData();
+				}
+
+				if (game_object2->type() == APPLE)
+				{
+					apple = (Fruit*)bodyB->GetUserData();
 				}
 
 				if (game_object2->type() == PLAYER)
@@ -268,21 +330,36 @@ void SceneApp::GroundPlayerCollision()
 			}
 			
 			//fruit hits the player
-			if(fruit && player)
+			if(banana && player)
 			{			
 				//gef::DebugOut("IT! collided\n");
-				FruitScheduledForRemoval.push_back(fruit);
+				BananaScheduledForRemoval.push_back(banana);
 				FlagPlayer = true;
 				FlagFruit = true;
 			}
 			
 			//fruit hits the ground
-			if (fruit)
+			if (banana)
 			{
-				FruitScheduledForRemoval.push_back(fruit);
+				BananaScheduledForRemoval.push_back(banana);
 				FlagFruit = true;
 			}
 			
+			//fruit hits the player
+			if (apple && player)
+			{
+				//gef::DebugOut("IT! collided\n");
+				AppleScheduledForRemoval.push_back(apple);
+				FlagPlayer = true;
+				FlagFruit = true;
+			}
+
+			//fruit hits the ground
+			if (apple)
+			{
+				AppleScheduledForRemoval.push_back(apple);
+				FlagFruit = true;
+			}
 			//gef::DebugOut("%i\n", world->GetContactCount());
 			//gef::DebugOut("%.1f\n", bodyA->GetMass());
 			//gef::DebugOut("%.1f\n", bodyB->GetMass());
@@ -345,6 +422,7 @@ void SceneApp::ProcessTouchInput()
 		}
 	}
 }
+
 void SceneApp::InitFont()
 {
 	font_ = new gef::Font(platform_);
