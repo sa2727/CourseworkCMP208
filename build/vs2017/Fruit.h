@@ -21,7 +21,7 @@ class Fruit : public game_object
 {
 public:
 	Fruit();
-	Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy);//creates fruit body
+	Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy, int Fruit_type);//creates fruit body
 	void update();//updates transform of fruit
 	void render(gef::Renderer3D* r);//renders fruit
 	void collisionCheck(b2World* world);//delete fruit body

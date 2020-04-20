@@ -2,15 +2,21 @@
 
 Fruit::Fruit()
 {
-	numofFruits = 10;
+	numofFruits = 100;
 }
 
-Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy)
-{
-	
+Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy, int Fruit_type)
+{	
 	m_body = NULL;
-	set_type(FRUIT);
-
+	if (Fruit_type == 1)
+	{
+		set_type(BANANA);
+	}
+	else
+	{
+		set_type(APPLE);
+	}
+	
 	set_mesh(p->GetDefaultCubeMesh());
 	
 	//physics body

@@ -3,7 +3,7 @@
 #include <box2d/Box2D.h>
 
 enum object_type {
-	GROUND, PLAYER, FRUIT
+	GROUND, PLAYER, BANANA, APPLE
 };
 
 
