@@ -11,6 +11,7 @@
 #include "Fruit.h"
 #include "Player.h"
 #include "Ground.h"
+#include "Wall.h"
 #include <vector>
 
 // FRAMEWORK FORWARD DECLARATIONS
@@ -32,7 +33,6 @@ public:
 	bool Update(float frame_time);
 	void Render();
 	void GroundPlayerCollision();
-	void ProcessTouchInput();
 private:
 	void InitFont();
 	void CleanUpFont();
@@ -61,18 +61,31 @@ private:
 
 	//fruit variables
 	Fruit f;
+
 	std::vector<Fruit*> bananas;
 	std::vector<Fruit*> apples;
+	std::vector<Fruit*> oranges;
+	std::vector<Fruit*> rotten_fruits;
+
 	std::vector<Fruit*> BananaScheduledForRemoval;
 	std::vector<Fruit*> AppleScheduledForRemoval;
+	std::vector<Fruit*> OrangeScheduledForRemoval;
+	std::vector<Fruit*> Rotten_FruitScheduledForRemoval;
+	
+
 	bool FlagFruit;
+	int maxfruit;
 
 	//Player variables
 	Player p;
 	bool FlagPlayer;//fruits hits player
+	bool FlagPlayerLife;//player loses a life
 
 	//ground variables
 	Ground g;
-};
 
+	//wall variables
+	Wall w;
+	std::vector<Wall*> walls;
+};
 #endif // _SCENE_APP_H
