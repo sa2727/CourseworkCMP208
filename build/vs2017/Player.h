@@ -27,12 +27,15 @@ public:
 	void render(gef::Renderer3D* r);
 	void IncrementScore();//increment score
 	int getScore();//return score
+	void DecrementLife();//increment score
+	int getLife();//return score
 
 	b2Body* m_body;
 	gef::Matrix44 transform;
 	gef::InputManager* input_manager;
 
-	int score;//player score
+	int score;//players score
+	int lives;//players lives
 
 };
 

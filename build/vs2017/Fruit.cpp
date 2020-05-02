@@ -2,7 +2,7 @@
 
 Fruit::Fruit()
 {
-	numofFruits = 100;
+	numofFruits = 99;
 }
 
 Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy, int Fruit_type)
@@ -12,9 +12,17 @@ Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy, int Fr
 	{
 		set_type(BANANA);
 	}
-	else
+	else if(Fruit_type == 2)
 	{
 		set_type(APPLE);
+	}
+	else if(Fruit_type == 3)
+	{
+		set_type(ORANGE);
+	}
+	else
+	{
+		set_type(ROTTEN);
 	}
 	
 	set_mesh(p->GetDefaultCubeMesh());
@@ -50,18 +58,12 @@ Fruit::Fruit(PrimitiveBuilder* p, b2World* world, float posx, float posy, int Fr
 }
 
 void Fruit::update()
-{
-	if (m_body != NULL)
-	{
-		gef::Vector4 pos(m_body->GetPosition().x, m_body->GetPosition().y, 0.f);
-		transform.SetIdentity();
-		transform.Scale(gef::Vector4(2.0f, 2.0f, 0.f));
-		transform.SetTranslation(pos);
-		set_transform(transform);
-	}
-	
+{	
+	//gef::Vector4 scale(0.01f, 0.01f, 0.01f);
+	gef::Vector4 scale(1.0f, 1.0f, 1.0f);
+
 	//gef::DebugOut("Fruit body null\n");
-	this->UpdateFromSimulation(m_body);
+	this->UpdateFromSimulation(m_body, scale);
 }
 
 void Fruit::render(gef::Renderer3D* r)

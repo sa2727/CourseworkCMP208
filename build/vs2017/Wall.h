@@ -13,11 +13,11 @@ namespace gef
 {
 	class Renderer3D;
 }
-class Ground : public game_object
+class Wall : public game_object
 {
 public:
-	Ground();
-	void initGround(PrimitiveBuilder* p, b2World* world);
+	Wall();
+	Wall(PrimitiveBuilder* p, b2World* world, float posx);
 	void update();
 	void render(gef::Renderer3D* r);
 

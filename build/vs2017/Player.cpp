@@ -4,6 +4,7 @@ Player::Player()
 {
 	set_type(PLAYER);
 	score = 0;
+	lives = 3;
 }
 
 void Player::initPlayer(PrimitiveBuilder* pb, gef::InputManager* i, b2World* world)
@@ -45,13 +46,14 @@ void Player::initPlayer(PrimitiveBuilder* pb, gef::InputManager* i, b2World* wor
 
 void Player::update()
 {
-	gef::Vector4 pos(m_body->GetPosition().x, m_body->GetPosition().y, 0.f);
+	/*gef::Vector4 pos(m_body->GetPosition().x, m_body->GetPosition().y, 0.f);
 	transform.SetIdentity();
 	transform.Scale(gef::Vector4(2.0f, 2.0f, 0.f));
 	transform.SetTranslation(pos);
-	set_transform(transform);
+	set_transform(transform);*/
 
-	this->UpdateFromSimulation(m_body);
+	gef::Vector4 scale(1.0f, 1.0f, 1.0f);
+	this->UpdateFromSimulation(m_body, scale);
 
 	input_manager->Update();
 	move();
@@ -97,4 +99,14 @@ void Player::IncrementScore()
 int Player::getScore()
 {
 	return score;
+}
+
+void Player::DecrementLife()
+{
+	lives -= 1;
+}
+
+int Player::getLife()
+{
+	return lives;
 }

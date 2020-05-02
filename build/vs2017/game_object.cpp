@@ -1,6 +1,6 @@
 #include "game_object.h"
 
-void game_object::UpdateFromSimulation(const b2Body* body)
+void game_object::UpdateFromSimulation(const b2Body* body, gef::Vector4 vect)
 {
 	if (body)
 	{
@@ -13,6 +13,7 @@ void game_object::UpdateFromSimulation(const b2Body* body)
 
 		// build object transformation matrix
 		gef::Matrix44 object_transform = object_rotation;
+		object_transform.Scale(vect);
 		object_transform.SetTranslation(object_translation);
 		set_transform(object_transform);
 	}
